@@ -48,7 +48,6 @@ resource "google_compute_instance" "jenkins" {
     #!bin/bash
     sudo apt update
     sudo apt install openjdk-11-jdk -y
-    sudo apt install jetty9 -y
     wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
     sudo sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
     sudo apt-get update
@@ -64,4 +63,9 @@ resource "google_compute_instance" "jenkins" {
     email  = google_service_account.default.email
     scopes = ["cloud-platform"]
   }
+
+  scheduling {
+    automatic_restart = true
+  }
+
 }
