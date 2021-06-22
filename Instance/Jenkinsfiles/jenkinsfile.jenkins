@@ -1,0 +1,22 @@
+#!groovy
+
+properties ([disableConcurrentBuilds()]) //Запретить одновременные сборки
+
+pipiline {
+  agent any
+
+  stages{
+    stage("Build"){
+      steps {
+        sh "mvn -version"
+        sh "mvn clean install"
+      }
+    }
+  }
+
+  post {
+    always {
+      cleanWs()
+    }
+  }
+}
