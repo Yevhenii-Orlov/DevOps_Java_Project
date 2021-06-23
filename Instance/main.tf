@@ -1,9 +1,9 @@
 resource "google_service_account" "default" {
-  account_id   = var.gcp_project
+  account_id   = var.project
   display_name = "Service Account"
 }
 
-# VPC
+# VPC Network
 resource "google_compute_network" "vpc" {
   name                    = var.network
   auto_create_subnetworks = true
@@ -26,7 +26,7 @@ resource "google_compute_firewall" "firewall" {
 resource "google_compute_instance" "jenkins" {
   name         = "devtools"
   machine_type = "e2-medium"
-  zone         = var.gcp_zone
+  zone         = var.zone
 
   tags = ["http-server"]
 

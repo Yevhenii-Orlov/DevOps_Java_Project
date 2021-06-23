@@ -32,7 +32,7 @@ variable "gke_cluster_name" {
 
 variable "gke_network" {
   type    = string
-  default = "devops-java-project-vpc	"
+  default = "devops-java-project-vpc"
 }
 
 variable "gke_subnetwork" {
