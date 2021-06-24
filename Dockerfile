@@ -1,10 +1,13 @@
-# Alpine Linux with OpenJDK JRE
-FROM openjdk:8-jre-alpine
 
-EXPOSE 8181
+FROM maven:3.5-jdk-8
 
-# copy jar into image
-COPY target/spring-petclinic-2.2.0.BUILD-SNAPSHOT.jar /usr/bin/spring-petclinic.jar
+RUN mkdir -p /deploy/application
 
-# run application with this command line 
-ENTRYPOINT ["java","-jar","/usr/bin/spring-petclinic.jar","--server.port=8181"]
+VOLUME ["/deploy/application"]
+
+WORKDIR /deploy/application
+
+ADD . .
+
+ENTRYPOINT ["mvn","clean","package"]
+

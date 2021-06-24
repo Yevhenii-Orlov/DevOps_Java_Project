@@ -1,55 +1,30 @@
-pipeline {
-  environment {
-    registry = "tyitzhak/spring-petclinic-hub"
-    registryCredential = 'docker-hub'
-    dockerImage = ''
-  }
-  agent any
-  tools {
-    maven 'Maven 3.3.9'
-    jdk 'jdk8'
-  }
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/Yevhenii-Orlov/DevOps_Java_Project.git'
-      }
-    }
-    stage('Compile') {
-       steps {
-         sh 'mvn compile' //only compilation of the code
-       }
-    }
-    stage('Test') {
-      steps {
-        sh '''
-        mvn clean install
-        ls
-        pwd
-        '''
-        //if the code is compiled, we test and package it in its distributable format; run IT and store in local repository
-      }
-    }
-    stage('Building Image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":latest"
-        }
-      }
-    }
-    stage('Deploy Image') {
-      steps{
-         script {
-            docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:latest"
-      }
-    }
-  }
+
+node {
+
+   stage('Clone Repository') {
+        // Get some code from a GitHub repository
+        git 'https://github.com/denisdbell/spring-petclinic.git'
+    
+   }
+   stage('Build Maven Image') {
+        docker.build("maven-build")
+   }
+   
+   stage('Run Maven Container') {
+       
+        //Remove maven-build-container if it exisits
+        sh " docker rm -f maven-build-container"
+        
+        //Run maven image
+        sh "docker run --rm --name maven-build-container maven-build"
+   }
+   
+   stage('Deploy Spring Boot Application') {
+        
+         //Remove maven-build-container if it exisits
+        sh " docker rm -f java-deploy-container"
+       
+        sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 denisdbell/petclinic-deploy"
+   }
+
 }

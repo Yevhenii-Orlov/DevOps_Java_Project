@@ -1,21 +1,6 @@
-/*
- * Copyright 2012-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.samples.petclinic.vet;
 
+import static org.hamcrest.xml.HasXPath.hasXPath;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,20 +10,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.vet.Specialty;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetController;
+import org.springframework.samples.petclinic.vet.VetRepository;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 /**
  * Test class for the {@link VetController}
  */
+@RunWith(SpringRunner.class)
 @WebMvcTest(VetController.class)
-class VetControllerTests {
+public class VetControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,8 +38,8 @@ class VetControllerTests {
     @MockBean
     private VetRepository vets;
 
-    @BeforeEach
-    void setup() {
+    @Before
+    public void setup() {
         Vet james = new Vet();
         james.setFirstName("James");
         james.setLastName("Carter");
@@ -64,7 +56,7 @@ class VetControllerTests {
     }
 
     @Test
-    void testShowVetListHtml() throws Exception {
+    public void testShowVetListHtml() throws Exception {
         mockMvc.perform(get("/vets.html"))
             .andExpect(status().isOk())
             .andExpect(model().attributeExists("vets"))
@@ -72,11 +64,19 @@ class VetControllerTests {
     }
 
     @Test
-    void testShowResourcesVetList() throws Exception {
-        ResultActions actions = mockMvc.perform(get("/vets")
-            .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-        actions.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+    public void testShowResourcesVetList() throws Exception {
+        ResultActions actions = mockMvc.perform(get("/vets.json").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        actions.andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(jsonPath("$.vetList[0].id").value(1));
+    }
+
+    @Test
+    public void testShowVetListXml() throws Exception {
+        mockMvc.perform(get("/vets.xml").accept(MediaType.APPLICATION_XML))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_XML_VALUE))
+            .andExpect(content().node(hasXPath("/vets/vetList[id=1]/id")));
     }
 
 }
