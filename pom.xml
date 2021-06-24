@@ -124,7 +124,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
           <execution>
-            <!-- Spring Boot Actuator displays build-related information 
+            <!-- Spring Boot Actuator displays build-related information
               if a META-INF/build-info.properties file is present -->
             <goals>
               <goal>build-info</goal>
@@ -156,8 +156,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+                <useSystemClassLoader>false</useSystemClassLoader>
+            </configuration>
+        </plugin>
 
-      <!-- Spring Boot Actuator displays build-related information if a git.properties 
+      <!-- Spring Boot Actuator displays build-related information if a git.properties
         file is present at the classpath -->
       <plugin>
         <groupId>pl.project13.maven</groupId>
@@ -223,7 +231,7 @@
           </configuration>
       </plugin>
     </plugins>
-    
+
   </build>
   <reporting>
     <plugins>
@@ -239,6 +247,14 @@
           <check />
         </configuration>
       </plugin>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+                <useSystemClassLoader>false</useSystemClassLoader>
+            </configuration>
+        </plugin>
     </plugins>
   </reporting>
 
