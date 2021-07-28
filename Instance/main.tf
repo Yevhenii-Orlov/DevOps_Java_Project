@@ -57,16 +57,6 @@ resource "google_compute_instance" "jenkins" {
     sudo ufw allow from any to any port 80 proto tcp -y
     sudo ufw allow from any to any port 22 proto tcp -y
     sudo apt-get update
-    sudo apt-get install -y \
-    >     apt-transport-https \
-    >     ca-certificates \
-    >     curl \
-    >     gnupg \
-    >     lsb-release
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    sudo apt-get update
-    sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-    sudo usermod -a -G docker jenkins
     EOF
 
   service_account {

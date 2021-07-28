@@ -10,9 +10,14 @@ variable "gcp_project" {
   default = "devops-java-project"
 }
 
+variable "name" {
+  type    = string
+  default = "gke-cluster"
+}
+
 variable "gcp_region" {
   type    = string
-  default = "us-west1"
+  default = "us-central1"
 }
 
 variable "gcp_zone" {
